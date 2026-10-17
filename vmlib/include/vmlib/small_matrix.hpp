@@ -61,13 +61,36 @@ struct SmallMat
 template< std::size_t tM, std::size_t tN, std::size_t tP, typename tType > constexpr
 SmallMat<tM,tP,tType> operator*( SmallMat<tM,tN,tType> const& aLhs, SmallMat<tN,tP,tType> const& aRhs ) noexcept
 {
-	return {}; //TODO: implement me
+	// return {}; //TODO: implement me
+	SmallMat<tM, tP, tType> ret{};
+	for (std::size_t i = 0; i < tM; ++i)
+	{
+		for (std::size_t j = 0; j < tP; ++j)
+		{
+			for (std::size_t k = 0; k < tN; ++k)
+			{
+				ret[i, j] += aLhs[i, k] * aRhs[k, j];
+			}
+		}
+	}
+
+	return ret;
 }
 
 template< std::size_t tM, std::size_t tN, typename tType > constexpr
 SmallVec<tM,tType> operator*( SmallMat<tM,tN,tType> const& aLeft, SmallVec<tN,tType> const& aRight ) noexcept
 {
-	return {}; //TODO: implement me
+	// return {}; //TODO: implement me
+	SmallVec<tM, tType> ret{};
+	for (std::size_t i = 0; i < tM; ++i)
+	{
+		for (std::size_t j = 0; j < tN; ++j)
+		{
+			ret[i] += aLeft[i, j] * aRight[j];
+		}
+	}
+
+	return ret;
 }
 
 // Functions
@@ -75,7 +98,17 @@ template< std::size_t tM, std::size_t tN, typename tType >
 constexpr
 SmallMat<tN,tM,tType> transpose( SmallMat<tM,tN,tType> const& aMat ) noexcept
 {
-	return {}; //TODO: implement me
+	// return {}; //TODO: implement me
+	SmallMat<tN, tM, tType> ret{};
+	for (std::size_t i = 0; i < tM; ++i)
+	{
+		for (std::size_t j = 0; j < tN; ++j)
+		{
+			ret[j, i] = aMat[i, j];
+		}
+	}
+
+	return ret;
 }
 
 // Pseudo-constructor for identity matrices
