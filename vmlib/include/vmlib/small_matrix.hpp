@@ -133,13 +133,85 @@ template< std::size_t tN, typename tType, std::size_t tM > inline
 void gauss( SmallMat<tN,tN,tType> aMat, SmallMat<tN,tM,tType>& aResult ) noexcept
 {
 	// TODO-Task 2.1 only: implement me
+	using std::abs;
+
+	for (std::size_t k = 0; k < tN; ++k)
+	{
+		std::size_t pivotRow = k;
+		for (std::size_t i = k + 1; i < tN; ++i)
+		{
+			if (abs(aMat[i, k]) > abs(aMat[pivotRow, k]))
+			{
+				pivotRow = i;
+			}
+		}
+		if (pivotRow != k)
+		{
+			for (std::size_t j = 0; j < tN; ++j)
+			{
+				tType temp = aMat[k, j];
+				aMat[k, j] = aMat[pivotRow, j];
+				aMat[pivotRow, j] = temp;
+			}
+			for (std::size_t j = 0; j < tM; ++j)
+			{
+				tType temp = aResult[k, j];
+				aResult[k, j] = aResult[pivotRow, j];
+				aResult[pivotRow, j] = temp;
+			}
+		}
+		for (std::size_t i = k + 1; i < tN; ++i)
+		{
+			tType factor = aMat[i, k] / aMat[k, k];
+
+			aMat[i, k] = tType{};
+
+			for (std::size_t j = k + 1; j < tN; ++j)
+			{
+				aMat[i, j] -= factor * aMat[k, j];
+			}
+
+			for (std::size_t j = 0; j < tM; ++j)
+			{
+				aResult[i, j] -= factor * aResult[k, j];
+			}
+		}
+	}
+	
+	for (std::size_t k = tN; k-- > 0; )
+	{
+		tType pivot = aMat[k, k];
+
+		for (std::size_t j = 0; j < tM; ++j)
+		{
+			aResult[k, j] /= pivot;
+		}
+
+		for (std::size_t i = 0; i < k; ++i)
+		{
+			tType factor = aMat[i, k] / pivot;
+
+			for (std::size_t j = 0; j < tM; ++j)
+			{
+				aResult[i, j] -= factor * aResult[k, j];
+			}
+		}
+	}
 }
 
 template< std::size_t tN, typename tType > // Must be square!
-SmallMat<tN,tN,tType> invert( SmallMat<tN,tN,tType> const& ) noexcept;
+SmallMat<tN,tN,tType> invert( SmallMat<tN,tN,tType> const& aMat ) noexcept
+{
+	SmallMat<tN, tN, tType> ret =
+		make_identity<SmallMat<tN, tN, tType>>();
+
+	gauss(aMat, ret);
+
+	return ret;
+}
 
 template<>
-SmallMat<4,4,float> invert( SmallMat<4,4,float> const& ) noexcept;
+SmallMat<4, 4, float> invert(SmallMat<4, 4, float> const&) noexcept;
 
 
 #endif // SMALL_MATRIX_HPP_7266454B_05D7_441E_8775_07E79DDBBE03
